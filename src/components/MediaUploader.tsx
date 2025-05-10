@@ -131,7 +131,7 @@ const MediaUploader = () => {
       toast({
         title: "Analysis Complete",
         description: `We've analyzed your ${mediaType} and determined results.`,
-        variant: verdict === 'fake' ? "destructive" : verdict === 'real' ? "default" : "secondary",
+        variant: verdict === 'fake' ? "destructive" : "default",
       });
       
       console.log(`Analysis complete for ${file.name}`);
