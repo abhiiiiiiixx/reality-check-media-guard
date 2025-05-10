@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -79,52 +78,42 @@ const MediaUploader = () => {
     
     setIsLoading(true);
     
-    // Enhanced simulation of AI analysis
+    // Simulated analysis with more balanced results
+    // Note: In a production app, this would be replaced with a real ML model
     setTimeout(() => {
-      // For demo purposes, use file properties to determine if it's likely AI-generated
-      // In a real implementation, this would be replaced with actual ML model analysis
+      // This is a simplified simulation - in reality, we would use a trained ML model
+      // For now, we'll use less biased random values for demonstration
       
-      // Calculate "entropy" from file size and last modified date as a pseudo-random seed
-      const fileSize = file.size;
-      const lastModified = file.lastModified;
       const fileName = file.name.toLowerCase();
       
-      // Check for common AI generation markers in filename
+      // Check for obvious AI markers, but don't heavily weight them
       const aiMarkers = ['ai', 'generated', 'gpt', 'dall-e', 'midjourney', 'stable-diffusion'];
       const hasAiMarker = aiMarkers.some(marker => fileName.includes(marker));
       
-      // Determine if the file was created/modified recently (more likely for AI content)
-      const isRecentlyCreated = (Date.now() - lastModified) < 7 * 24 * 60 * 60 * 1000; // Within a week
-      
-      // Calculate fake probability based on multiple factors
+      // Generate more balanced probabilities
+      // Start with a base chance that slightly favors authenticity
       let fakeScore = 0;
       
-      // If filename contains AI markers, high probability it's fake
+      // Only slightly increase score for AI markers (not as extreme as before)
       if (hasAiMarker) {
-        fakeScore += 60;
+        fakeScore += 30;
       }
       
-      // Recently created files are slightly more likely to be AI-generated
-      if (isRecentlyCreated) {
-        fakeScore += 10;
-      }
+      // Add randomization with a more reasonable distribution
+      // This gives a more balanced assessment
+      fakeScore += Math.floor(Math.random() * 60); // 0-60 random component
       
-      // Add some randomization but weight toward higher fake probability (for demo purposes)
-      fakeScore += Math.floor(Math.random() * 30) + 20;
-      
-      // Cap the score at 98 to avoid absolute certainty
-      fakeScore = Math.min(fakeScore, 98);
-      
-      // Ensure minimum fake score is 65% for demo purposes
-      fakeScore = Math.max(fakeScore, 65);
+      // Cap the score at 95 to avoid absolute certainty
+      fakeScore = Math.min(fakeScore, 95);
       
       const realScore = 100 - fakeScore;
-      const confidenceScore = 80 + Math.floor(Math.random() * 15); // High confidence
+      const confidenceScore = 70 + Math.floor(Math.random() * 20);
       
-      // Determine verdict
+      // More balanced verdict thresholds
       let verdict: 'real' | 'fake' | 'uncertain' = 'uncertain';
-      if (fakeScore > 60) verdict = 'fake';
-      else if (realScore > 60) verdict = 'real';
+      if (fakeScore > 70) verdict = 'fake';
+      else if (realScore > 70) verdict = 'real';
+      else verdict = 'uncertain';
       
       // Generate appropriate detected features based on verdict
       let detectedFeatures: string[] = [];
