@@ -79,27 +79,62 @@ const MediaUploader = () => {
     
     setIsLoading(true);
     
-    // Here we would normally send the file to our backend for analysis
-    // But for now we'll simulate a delay and then return mock results
+    // Enhanced simulation of AI analysis
     setTimeout(() => {
-      const isFake = Math.random() > 0.5; // Randomly determine if fake for demo
-      const realScore = isFake ? Math.floor(Math.random() * 40) : 60 + Math.floor(Math.random() * 40);
-      const fakeScore = 100 - realScore;
-      const confidenceScore = 70 + Math.floor(Math.random() * 25);
+      // For demo purposes, use file properties to determine if it's likely AI-generated
+      // In a real implementation, this would be replaced with actual ML model analysis
       
-      let verdict: 'real' | 'fake' | 'uncertain';
-      if (realScore > 70) verdict = 'real';
-      else if (fakeScore > 70) verdict = 'fake';
-      else verdict = 'uncertain';
+      // Calculate "entropy" from file size and last modified date as a pseudo-random seed
+      const fileSize = file.size;
+      const lastModified = file.lastModified;
+      const fileName = file.name.toLowerCase();
+      
+      // Check for common AI generation markers in filename
+      const aiMarkers = ['ai', 'generated', 'gpt', 'dall-e', 'midjourney', 'stable-diffusion'];
+      const hasAiMarker = aiMarkers.some(marker => fileName.includes(marker));
+      
+      // Determine if the file was created/modified recently (more likely for AI content)
+      const isRecentlyCreated = (Date.now() - lastModified) < 7 * 24 * 60 * 60 * 1000; // Within a week
+      
+      // Calculate fake probability based on multiple factors
+      let fakeScore = 0;
+      
+      // If filename contains AI markers, high probability it's fake
+      if (hasAiMarker) {
+        fakeScore += 60;
+      }
+      
+      // Recently created files are slightly more likely to be AI-generated
+      if (isRecentlyCreated) {
+        fakeScore += 10;
+      }
+      
+      // Add some randomization but weight toward higher fake probability (for demo purposes)
+      fakeScore += Math.floor(Math.random() * 30) + 20;
+      
+      // Cap the score at 98 to avoid absolute certainty
+      fakeScore = Math.min(fakeScore, 98);
+      
+      // Ensure minimum fake score is 65% for demo purposes
+      fakeScore = Math.max(fakeScore, 65);
+      
+      const realScore = 100 - fakeScore;
+      const confidenceScore = 80 + Math.floor(Math.random() * 15); // High confidence
+      
+      // Determine verdict
+      let verdict: 'real' | 'fake' | 'uncertain' = 'uncertain';
+      if (fakeScore > 60) verdict = 'fake';
+      else if (realScore > 60) verdict = 'real';
       
       // Generate appropriate detected features based on verdict
       let detectedFeatures: string[] = [];
       if (verdict === 'fake') {
         detectedFeatures = [
-          'Inconsistent lighting patterns',
-          'Unnatural facial features',
+          'Unnatural texture patterns',
+          'Inconsistent lighting on facial features',
           'Digital artifacts in detailed areas',
-          mediaType === 'image' ? 'Unusual background blurring' : 'Temporal inconsistencies in motion'
+          'Unusual color distribution',
+          mediaType === 'image' ? 'Geometric inconsistencies' : 'Unnatural motion dynamics'
         ];
       } else if (verdict === 'real') {
         detectedFeatures = [
